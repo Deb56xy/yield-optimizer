@@ -379,11 +379,7 @@ export function DepositCard() {
         <div className="rounded-lg bg-slate-50 border border-slate-200 p-3">
           <div className="flex justify-between text-xs">
             <span className="text-slate-600">You will receive:</span>
-            <span className="font-medium text-slate-900">~{amount || "0"} YieldCoin</span>
-          </div>
-          <div className="flex justify-between text-xs mt-1">
-            <span className="text-slate-600">Current APY:</span>
-            <span className="text-rose-700 font-semibold">8.5%</span>
+            <span className="font-medium text-slate-900">~{amount || "0"} YieldAVAX</span>
           </div>
         </div>
 
