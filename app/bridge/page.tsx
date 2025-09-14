@@ -9,7 +9,6 @@ import { Portfolio } from "@/components/Portfolio"
 // Configuration constants
 const SUPPORTED_CHAINS = [
   { id: 11155111, name: "Ethereum Sepolia", shortName: "Sepolia" },
-  { id: 84532, name: "Base Sepolia", shortName: "Base Sepolia" },
   { id: 43113, name: "Avalanche Fuji", shortName: "Fuji" },
 ]
 
@@ -19,7 +18,7 @@ const CONTRACTS = {
     84532: "0xD3b06cEbF099CE7DA4AcCf578aaebFDBd6e88a93", // Base Sepolia
     43113: "0xF694E193200268f9a4868e4Aa017A0118C9a8177", // Fuji
   },
-  YIELDCOIN: {
+  YIELDAVAX: {
     11155111: "0x5C5f07FD137Aa38860B5fA2ca5671bd5C49333B4", // Replace with actual
     84532: "0x771ceed62ac79cBa5Ec557b8095b8Cdc13559dD3", // Replace with actual
     43113: "0x550a6bef9fa59639Cd73126D7D066948280f9FB9", // Replace with actual
@@ -68,7 +67,7 @@ export default function CrossChainTransfer() {
   const destinationChain = SUPPORTED_CHAINS.find((chain) => chain.id.toString() === destinationChainId)
   const isOnCorrectChain = chainId?.toString() === selectedSourceChainId
 
-  // Get YieldCoin balance for selected source chain
+  // Get YieldAVAX balance for selected source chain
   useEffect(() => {
     const getBalance = async () => {
       if (!address || !selectedSourceChainId || !isOnCorrectChain || !publicClient) {
@@ -77,12 +76,12 @@ export default function CrossChainTransfer() {
       }
 
       const sourceChainIdNum = Number.parseInt(selectedSourceChainId)
-      const yieldCoinAddress = CONTRACTS.YIELDCOIN[sourceChainIdNum as keyof typeof CONTRACTS.YIELDCOIN]
-      if (!yieldCoinAddress) return
+      const yieldAVAXAddress = CONTRACTS.YIELDAVAX[sourceChainIdNum as keyof typeof CONTRACTS.YIELDAVAX]
+      if (!yieldAVAXAddress) return
 
       try {
         const balance = await publicClient.readContract({
-          address: yieldCoinAddress as `0x${string}`,
+          address: yieldAVAXAddress as `0x${string}`,
           abi: [
             {
               name: "balanceOf",
@@ -116,15 +115,15 @@ export default function CrossChainTransfer() {
 
       const sourceChainIdNum = Number.parseInt(selectedSourceChainId)
       const routerAddress = CONTRACTS.CCIP_ROUTER[sourceChainIdNum as keyof typeof CONTRACTS.CCIP_ROUTER]
-      const yieldCoinAddress = CONTRACTS.YIELDCOIN[sourceChainIdNum as keyof typeof CONTRACTS.YIELDCOIN]
+      const yieldAVAXAddress = CONTRACTS.YIELDAVAX[sourceChainIdNum as keyof typeof CONTRACTS.YIELDAVAX]
 
-      if (!routerAddress || !yieldCoinAddress) return
+      if (!routerAddress || !yieldAVAXAddress) return
 
       try {
         const amountWei = BigInt(Math.floor(Number.parseFloat(amount) * 1e18))
 
         const allowance = await publicClient.readContract({
-          address: yieldCoinAddress as `0x${string}`,
+          address: yieldAVAXAddress as `0x${string}`,
           abi: [
             {
               name: "allowance",
@@ -161,10 +160,10 @@ export default function CrossChainTransfer() {
 
       const sourceChainIdNum = Number.parseInt(selectedSourceChainId)
       const routerAddress = CONTRACTS.CCIP_ROUTER[sourceChainIdNum as keyof typeof CONTRACTS.CCIP_ROUTER]
-      const yieldCoinAddress = CONTRACTS.YIELDCOIN[sourceChainIdNum as keyof typeof CONTRACTS.YIELDCOIN]
+      const yieldAVAXAddress = CONTRACTS.YIELDAVAX[sourceChainIdNum as keyof typeof CONTRACTS.YIELDAVAX]
       const destChainSelector = CHAIN_SELECTORS[Number.parseInt(destinationChainId) as keyof typeof CHAIN_SELECTORS]
 
-      if (!routerAddress || !yieldCoinAddress || !destChainSelector) return
+      if (!routerAddress || !yieldAVAXAddress || !destChainSelector) return
 
       setIsEstimatingFee(true)
 
@@ -174,7 +173,7 @@ export default function CrossChainTransfer() {
         const fee = await ccipClient.getFee({
           client: publicClient,
           routerAddress: routerAddress as `0x${string}`,
-          tokenAddress: yieldCoinAddress as `0x${string}`,
+          tokenAddress: yieldAVAXAddress as `0x${string}`,
           amount: amountWei,
           destinationAccount: address as `0x${string}`,
           destinationChainSelector: destChainSelector,
@@ -226,9 +225,9 @@ export default function CrossChainTransfer() {
 
     const sourceChainIdNum = Number.parseInt(selectedSourceChainId)
     const routerAddress = CONTRACTS.CCIP_ROUTER[sourceChainIdNum as keyof typeof CONTRACTS.CCIP_ROUTER]
-    const yieldCoinAddress = CONTRACTS.YIELDCOIN[sourceChainIdNum as keyof typeof CONTRACTS.YIELDCOIN]
+    const yieldAVAXAddress = CONTRACTS.YIELDAVAX[sourceChainIdNum as keyof typeof CONTRACTS.YIELDAVAX]
 
-    if (!routerAddress || !yieldCoinAddress) return
+    if (!routerAddress || !yieldAVAXAddress) return
 
     setIsApproving(true)
     setStatus("Approving...")
@@ -239,7 +238,7 @@ export default function CrossChainTransfer() {
       const { txHash } = await ccipClient.approveRouter({
         client: walletClient,
         routerAddress: routerAddress as `0x${string}`,
-        tokenAddress: yieldCoinAddress as `0x${string}`,
+        tokenAddress: yieldAVAXAddress as `0x${string}`,
         amount: amountWei,
         waitForReceipt: false,
       })
@@ -251,7 +250,7 @@ export default function CrossChainTransfer() {
       await ccipClient.approveRouter({
         client: walletClient,
         routerAddress: routerAddress as `0x${string}`,
-        tokenAddress: yieldCoinAddress as `0x${string}`,
+        tokenAddress: yieldAVAXAddress as `0x${string}`,
         amount: amountWei,
         waitForReceipt: true,
       })
@@ -272,10 +271,10 @@ export default function CrossChainTransfer() {
 
     const sourceChainIdNum = Number.parseInt(selectedSourceChainId)
     const routerAddress = CONTRACTS.CCIP_ROUTER[sourceChainIdNum as keyof typeof CONTRACTS.CCIP_ROUTER]
-    const yieldCoinAddress = CONTRACTS.YIELDCOIN[sourceChainIdNum as keyof typeof CONTRACTS.YIELDCOIN]
+    const yieldAVAXAddress = CONTRACTS.YIELDAVAX[sourceChainIdNum as keyof typeof CONTRACTS.YIELDAVAX]
     const destChainSelector = CHAIN_SELECTORS[Number.parseInt(destinationChainId) as keyof typeof CHAIN_SELECTORS]
 
-    if (!routerAddress || !yieldCoinAddress || !destChainSelector) return
+    if (!routerAddress || !yieldAVAXAddress || !destChainSelector) return
 
     setIsTransferring(true)
     setStatus("Initiating transfer...")
@@ -286,7 +285,7 @@ export default function CrossChainTransfer() {
       const { txHash, messageId } = await ccipClient.transferTokens({
         client: walletClient,
         routerAddress: routerAddress as `0x${string}`,
-        tokenAddress: yieldCoinAddress as `0x${string}`,
+        tokenAddress: yieldAVAXAddress as `0x${string}`,
         amount: amountWei,
         destinationAccount: address as `0x${string}`,
         destinationChainSelector: destChainSelector,
@@ -423,7 +422,7 @@ export default function CrossChainTransfer() {
                       <div className="text-xs text-slate-600">
                         Balance:{" "}
                         <span className="font-bold text-slate-800">
-                          {isOnCorrectChain ? balance : "Switch to view"} YIELD
+                          {isOnCorrectChain ? balance : "Switch to view"} YIELDAVAX
                         </span>
                       </div>
                     </div>
@@ -568,7 +567,7 @@ export default function CrossChainTransfer() {
                         Approving...
                       </div>
                     ) : (
-                      "Approve YieldCoin"
+                      "Approve YieldAVAX"
                     )}
                   </button>
                 )}
@@ -611,7 +610,7 @@ export default function CrossChainTransfer() {
                       Transferring...
                     </div>
                   ) : (
-                    "Transfer YieldCoin"
+                    "Transfer YieldAVAX"
                   )}
                 </button>
               </div>
